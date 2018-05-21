@@ -78,12 +78,12 @@ public class Citta {
 		return cittaVicine;
 	}
 	//controlla che il nome sia composto da lettere maiuscole in questo caso in quanto convertito
-	public boolean controllaNome(String s) {
-		String maiuscolo=s.toUpperCase();
+	public boolean controllaNome(String nomeCitta) {
+		String maiuscolo=nomeCitta.toUpperCase();
 		for(int i=0;i<maiuscolo.length();i++)
-			if(maiuscolo.charAt(i)>='A' && maiuscolo.charAt(i)<='Z')
-				return true;
-		return false;
+			if(maiuscolo.charAt(i)<'A' || maiuscolo.charAt(i)>'Z')
+				return false;
+		return true;
 	}
 
 }
