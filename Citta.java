@@ -82,7 +82,7 @@ public class Citta {
 		String maiuscolo=nomeCitta.toUpperCase();
 		for(int i=0;i<maiuscolo.length();i++)
 			if(maiuscolo.charAt(i)<'A' || maiuscolo.charAt(i)>'Z')
-				return false;
+				return false;//se trovi un carattere che non è una lettera non va bene
 		return true;
 	}
 
