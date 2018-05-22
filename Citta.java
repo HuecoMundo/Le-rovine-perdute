@@ -3,9 +3,9 @@ import java.util.ArrayList;
 public class Citta {
 	private int id = 0;
 	private String nome = null;
-	private int x = 0;
-	private int y = 0;
-	private int h = 0;
+	private double x = 0;
+	private double y = 0;
+	private double h = 0;
 	//ha gli id delle citta vicine
 	private ArrayList<Integer> cittaVicine=new ArrayList<Integer>();
 	
@@ -30,7 +30,7 @@ public class Citta {
 		
 	}
 	//getters e setters con controlli nei setters
-	public int getX() {
+	public double getX() {
 		return x;
 	}
 
@@ -57,7 +57,7 @@ public class Citta {
 			this.id = id;
 	}
 
-	public int getY() {
+	public double getY() {
 		return y;
 	}
 
@@ -66,7 +66,7 @@ public class Citta {
 			this.y = y;
 	}
 
-	public int getH() {
+	public double getH() {
 		return h;
 	}
 
