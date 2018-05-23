@@ -1,18 +1,19 @@
 import java.util.*;
 
 
-public class Citt√† {
+public class Citt‡ {
 	
 	static Scanner scrivi = new Scanner(System.in);
 	
 	private int x = 0;
 	private int y = 0;
 	private int h = 0;
-	public  String nome = null;
-	public int id = 0;
+	private  String nome = null;
+	private int id = 0;
+	private ArrayList <Integer> cittaVicine = null;
 	
 	
-	Citt√† (int x, int y, int h, String nome, int id){ //costruttore
+	Citt‡ (int x, int y, int h, String nome, int id){ //costruttore
 		
 		this.x = x;
 		this.y = y;
@@ -20,15 +21,19 @@ public class Citt√† {
 		this.nome = nome;
 		this.id = id;
 		
+		cittaVicine = new ArrayList <Integer>();
+		
 	}
 	
-	Citt√† (){ //costruttore vuoto
+	Citt‡ (){ //costruttore vuoto
 		
 		x = 0;
 		y = 0;
 		h = 0;
 		nome = null;
 		id = 0;
+		
+		cittaVicine = new ArrayList <Integer>();
 		
 	}
 
@@ -56,15 +61,44 @@ public class Citt√† {
 		this.h = h;
 	}
 	
+	public String getNome() {
+		return nome;
+	}
 
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
 	
-	public String controllaPosizione(int pos) {
+	public int getIdVicino (int id) { //metodo che restituisce l'id del primo vicino
+		
+		return cittaVicine.get(id);
+	}
+	
+	public int getNumeroVicini() {
+		
+		return cittaVicine.size();
+	}
+	
+	public ArrayList <Integer> getCittaVicine() {
+		
+		return cittaVicine;
+	}
+
+	public static void controllaPosizione(int pos) {
 		
 		if (pos < 0)
-			return "Parametro inserito non valido, l'oggetto non verr√† creato";
-					
+			System.out.println("\nParametro inserito non valido, l'oggetto non verr‡ creato");
+		
 		else
-			return "Parametro valido";
+			System.out.println("\nParametro valido"); 
 			
 	}
 	
@@ -82,7 +116,7 @@ public class Citt√† {
 		
 			try {
 			
-				System.out.println("Inserire il nome della citt√†:\n");
+				System.out.println("Inserire il nome della citt‡:\n");
 				nome = scrivi.next();
 				
 			}

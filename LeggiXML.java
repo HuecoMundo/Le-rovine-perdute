@@ -4,10 +4,18 @@ import java.util.ArrayList;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
+
+
 public class LeggiXML {
-	private ArrayList<Citta> listaCitta=new ArrayList<Citta>();
-	private int numeroCitta=0;
-	
+	private static ArrayList<Città> listaCitta = new ArrayList<Città>();
+	private static int numeroCitta = 0;
+	/**
+	 * questo metodo legge gli attributi dei tag city e link e incrementa il numero di città
+	 * ogni volta che legge il tag city. Successivamente memorizza nella posizione numeroCitta
+	 * i vari attributi letti nei corrispondenti attributi della classe Citta scelti tramite 
+	 * lo switch
+	 * @param filename
+	 */
 	public void leggiAttributi(String filename) {
 		try {
 			XMLInputFactory xmlif=XMLInputFactory.newInstance();
@@ -17,7 +25,7 @@ public class LeggiXML {
 	            switch(xmlr.getEventType()) {
 	            case XMLStreamConstants.START_ELEMENT:{
 		            if(xmlr.getLocalName().equals("city")) {
-		            	numeroCitta++;	
+		            	listaCitta.add(new Città()); //gli aggiungo una città vuota	
 		            	for(int i=0;i<xmlr.getAttributeCount();i++) {
 		            		String attributo=xmlr.getAttributeLocalName(i);
 		            		switch(i) {
@@ -28,6 +36,7 @@ public class LeggiXML {
 		            		case 4: listaCitta.get(numeroCitta).setH(Integer.parseInt(attributo)); break;
 		            		}
 		            	}
+		            	numeroCitta++;//incremento alla fine così non salto la posizione 0
 	            	}
 		            else if(xmlr.getLocalName().equals("link")) {
 		            	String attributo=xmlr.getAttributeLocalName(0);
@@ -44,5 +53,19 @@ public class LeggiXML {
 			System.out.println("Ho trovato un errore nella lettura del file");
 		}
 	}
-
+	//quante città hai letto?
+	public static int getNumeroCitta() {
+		return listaCitta.size();
+	}
+	//quali città hai letto?
+	public ArrayList<Città> getListaCitta(){
+		return listaCitta;
+	}
+	
+	public static Città getCittaFromId (int id) {
+		
+		return listaCitta.get(id);
+	}
+	
+	
 }
