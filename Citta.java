@@ -80,10 +80,13 @@ public class Citta {
 	//controlla che il nome sia composto da lettere maiuscole in questo caso in quanto convertito
 	public boolean controllaNome(String nomeCitta) {
 		String maiuscolo=nomeCitta.toUpperCase();
+		int conta=0;
 		for(int i=0;i<maiuscolo.length();i++)
-			if(maiuscolo.charAt(i)<'A' || maiuscolo.charAt(i)>'Z')
-				return false;//se trovi un carattere che non è una lettera non va bene
-		return true;
+			if(maiuscolo.charAt(i)>='A' && maiuscolo.charAt(i)<='Z')
+				conta++;
+		if(conta==maiuscolo.length()-1 || conta==maiuscolo.length())//ho trovato tutte maiuscole? -1 perché alcune città hanno lo spazio bianco
+			return true;
+		return false;
 	}
 
 }

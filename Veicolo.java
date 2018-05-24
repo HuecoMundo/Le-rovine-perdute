@@ -13,7 +13,13 @@ public abstract class Veicolo {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
+	
+	/**
+	 * definito nelle classi figlie
+	 * @param partenza
+	 * @param arrivo
+	 * @return
+	 */
 	public abstract double calcolaDistanza(Citta partenza, Citta arrivo);
 
 }

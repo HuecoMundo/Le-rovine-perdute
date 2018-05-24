@@ -6,7 +6,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 public class LeggiXML {
 	private ArrayList<Citta> listaCitta=new ArrayList<Citta>();
-	private int numeroCitta=0;
+	private int numeroCitta=-1;
 	/**
 	 * questo metodo legge gli attributi dei tag city e link e incrementa il numero di città
 	 * ogni volta che legge il tag city. Successivamente memorizza nella posizione numeroCitta
@@ -23,9 +23,10 @@ public class LeggiXML {
 	            switch(xmlr.getEventType()) {
 	            case XMLStreamConstants.START_ELEMENT:{
 		            if(xmlr.getLocalName().equals("city")) {
+		            	numeroCitta++;
 		            	listaCitta.add(new Citta()); //gli aggiungo una città vuota	
 		            	for(int i=0;i<xmlr.getAttributeCount();i++) {
-		            		String attributo=xmlr.getAttributeLocalName(i);
+		            		String attributo=xmlr.getAttributeValue(i);
 		            		switch(i) {
 		            		case 0: listaCitta.get(numeroCitta).setId(Integer.parseInt(attributo)); break;
 		            		case 1: listaCitta.get(numeroCitta).setNome(attributo); break;
@@ -34,10 +35,9 @@ public class LeggiXML {
 		            		case 4: listaCitta.get(numeroCitta).setH(Integer.parseInt(attributo)); break;
 		            		}
 		            	}
-		            	numeroCitta++;//incremento alla fine così non salto la posizione 0
 	            	}
 		            else if(xmlr.getLocalName().equals("link")) {
-		            	String attributo=xmlr.getAttributeLocalName(0);
+		            	String attributo=xmlr.getAttributeValue(0);
 		            	listaCitta.get(numeroCitta).getCittaVicine().add(Integer.parseInt(attributo));
 		            }
 	            	break;
