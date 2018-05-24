@@ -3,10 +3,11 @@ public class Rotta {
 	private String nome=null;
 	private int numeroCitta=0;
 	private Map<Integer, LinkedList<Citta>> mappa;
-	ArrayList<Citta> cittaLette=new ArrayList<Citta>();
-	ArrayList<Double> distanze=new ArrayList<Double>();
-	ArrayList<Citta> precedenti=new ArrayList<Citta>();
-	ArrayList<Citta> percorsoMinimo=new ArrayList<Citta>();
+	private ArrayList<Citta> cittaLette=new ArrayList<Citta>();
+	private ArrayList<Double> distanze=new ArrayList<Double>();
+	private ArrayList<Citta> precedenti=new ArrayList<Citta>();
+	private ArrayList<Citta> percorsoMinimo=new ArrayList<Citta>();
+	private ArrayList<Integer> minimiGiaLetti=new ArrayList<Integer>();
 	/**
 	 * costruttore della classe rotta, riceve in ingresso il numero di citta e le citta lette
 	 * dalla classe LeggiXML, che saranno passate nel main tramite i due metodi get della classe
@@ -46,7 +47,7 @@ public class Rotta {
 	 * inizializza la lista di distanze a infinito e le città precedenti per ora sono null
 	 * preparazione a Dijkstra
 	 */
-	public void inizializzaDistanzeEPrecedenti() {
+	private void inizializzaDistanzeEPrecedenti() {
 		for(int i=0;i<numeroCitta;i++) {
 			if(i==0)
 				distanze.add(0.0);//distanza campoBase-campoBase=0
@@ -55,52 +56,82 @@ public class Rotta {
 			precedenti.add(null);
 		}
 	}
-	
-	public int cercaMinimo(ArrayList<Double> distanze) {
+	/**
+	 * cerca la distanza minimo evitando di leggere quella che aveva preso nell'iterazione
+	 * precedente l'algoritmo di Dijkstra servendosi della lista minimiGiaLetti
+	 * @param distanze
+	 * @return posizione del minimo
+	 */
+	private int cercaMinimo(ArrayList<Double> distanze) {
 		double min=Double.POSITIVE_INFINITY;
+		int posizioneMinimo=0;
 		for(int i=0;i<distanze.size();i++) {
-			if(distanze.get(i)<min)
-				min=distanze.get(i);
+			//la seconda condizione impedisce che una città isolata venga ignorata(città 151 nelle 200)
+			if(distanze.get(i)<min || distanze.get(i)==min) {
+				if(!minimiGiaLetti.contains(i)) {//ho già letto questo minimo?
+					min=distanze.get(i);
+					posizioneMinimo=i;
+				}
+			}
 		}
-		return distanze.indexOf(min);
+		minimiGiaLetti.add(posizioneMinimo);//aggiungilo ai minimi già letti
+		return posizioneMinimo;
+	}
+	/**
+	 * cerca la città nella lista di quelle lette per evitare che prenda una città sbagliata
+	 * cancellalo
+	 * @param id
+	 * @return indirizzo in cui trova la città
+	 */
+	private int cercaCittaPerId(int id) {
+		for(int i=0;i<cittaLette.size();i++)
+			if(cittaLette.get(i).getId()==id)
+				return i;
+		return -1;//non l'ho trovata
 	}
 	
-	public void calcolaPercorsoMinimo(Rotta mappaDelTesoro, Veicolo macchina) {
+	/**
+	 * algoritmo di Dijkstra
+	 * @param macchina
+	 */
+	public void calcolaPercorsoMinimo(Veicolo macchina) {
+		inizializzaDistanzeEPrecedenti();
 		while(!cittaLette.isEmpty()) {
-			inizializzaDistanzeEPrecedenti();//rendo tutte le distanze infinito e i prec. null
-			int indirizzoMinimo=cercaMinimo(distanze);
-			Citta partenza=cittaLette.get(indirizzoMinimo);//città con distanza minima, la T
-			LinkedList<Citta> vicinePartenza=mappa.get(indirizzoMinimo);//prendo le vicine alla partenza
-			for(int i=0;i<vicinePartenza.size();i++) {
-				//la città è ancora da visitare?
-				if(cittaLette.contains(vicinePartenza.get(i))) {
-					Citta vicina=vicinePartenza.get(i);//N
-					//calcola la distanza tra una città e l'altra e la somma a quella già percorsa
-					double distanzaDaPercorrere=distanze.get(indirizzoMinimo)+
-							macchina.calcolaDistanza(partenza, vicina);
-					//guarda se la distanza appena calcolata è minore di quella memorizzata
-					//nella lista di distanze alla posizione corrispondente all'id della
-					//città vicina
-					if(distanzaDaPercorrere<distanze.get(vicina.getId())) {
-						distanze.set(vicina.getId(), distanzaDaPercorrere);//mette la distanza minima
-						precedenti.set(vicina.getId(), partenza);//il precedente per ora è partenza
+			int posizioneMinimo=cercaMinimo(distanze);//cerca la posizione del nodo con distanza minima
+			Citta partenza=cittaLette.get(cercaCittaPerId(posizioneMinimo));//parti da lì
+			LinkedList<Citta> vicine=mappa.get(partenza.getId());//prendi le sue vicine
+			for(int i=0;i<vicine.size();i++) {
+				if(cittaLette.contains(vicine.get(i))) {//ho già visitato questa città?
+					Citta vicina=vicine.get(i);
+					double distanza=distanze.get(posizioneMinimo)+
+							macchina.calcolaDistanza(partenza, vicina);//calcola alt
+					//alt è minore della distanza già presente nella lista di distanze?
+					if(distanza<distanze.get(vicina.getId())) {
+						distanze.set(vicina.getId(), distanza);//metti la nuova distanza
+						precedenti.set(vicina.getId(), partenza);//scrivi la nuova precedente
 					}
 				}
-				else
-					continue;
 			}
-			/*
-			 * toglie la città appena letta, ha già calcolato la distanza minima
-			 * toglie inoltre la distanza minima appena usata come riferimento per evitare che
-			 * alla prossima iterazione ripeschi lo stesso indirizzo
-			 */
-			cittaLette.remove(indirizzoMinimo);
-			distanze.remove(indirizzoMinimo);
+			cittaLette.remove(partenza);//rimuovi la città visitata
 		}
 	}
-	
-	public void costruisciPercorsoMinimo() {
-		
+	/**
+	 * questo metodo costruisce il percorso minimo risalendo a ritroso l'ArrayList dei percorsi
+	 * precedenti e memorizzando queste città in una nuova ArrayList di città che rappresenterà
+	 * il percorso minimo percorribile
+	 * @param quanteCitta
+	 */
+	public ArrayList<Citta> costruisciPercorsoMinimo(int quanteCitta) {
+		int i=quanteCitta-1;
+		percorsoMinimo.add(precedenti.get(i));
+		while(true) {
+			int idCittaPrecedente=precedenti.get(i).getId();
+			if(idCittaPrecedente==0)//attenzione alla nullptr exception
+				break;//se c'è interrompi la costruzione e restituisci l'array
+			percorsoMinimo.add(precedenti.get(idCittaPrecedente));
+			i=idCittaPrecedente;//reinizializza i
+		}
+		return percorsoMinimo;
 	}
 
 }
