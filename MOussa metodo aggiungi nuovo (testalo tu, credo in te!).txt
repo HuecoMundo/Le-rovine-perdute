@@ -1,0 +1,41 @@
+
+	
+	//metodo che aggiunge tutte le distanze calcolate per il team Tonatiuh in una matrice denominata "distanze_team_Tonatiuh"
+	public void aggiungiDistanzeTonatiuh() {		
+		int k = 0;
+		
+		//ciclo per scorrere le righe, ovvero le città "da esaminare" con il controllo incrociato
+		for (int i = 0; i < LeggiXML.getNumeroCitta(); i++) {
+			
+			//ciclo per scorrere le colonne, ovvero tutte le possibili città vicine
+			for (int j = 0; j < LeggiXML.getNumeroCitta(); j++) {
+				
+				int metti = LeggiXML.getCittaFromId(i).getIdVicino(k);
+
+				//Se la posizione nella matrice non è sulla diagonale...do something
+				if (i != j) {
+										
+					/*	metodo che inserisce nella posizione corrispondente alla riga della città esaminata
+					 *	e nella colonna corrispondente all'id del vicino (che corrisponde all'indice dell'ArrayList 
+					 *	di città grazie al fatto che gli id siano in ordine crescente nell'xml) il peso per il veicolo del team Tonatiuh 
+					*/
+					if (metti == j){
+					distanze_team_Tonatiuh[i][LeggiXML.getCittaFromId(i).getIdVicino(j)] = 
+							
+							
+							Funzioni.calculateTeamTonatiuh( LeggiXML.getCittaFromId(i).getX(),
+							LeggiXML.getCittaFromId(i).getY(),
+							LeggiXML.getCittaFromId(LeggiXML.getCittaFromId(i).getIdVicino(j)).getX(),
+							LeggiXML.getCittaFromId(LeggiXML.getCittaFromId(i).getIdVicino(j)).getY());
+
+					k++;
+					}
+					
+				}
+				
+							
+			}
+		
+		}
+	
+	}
